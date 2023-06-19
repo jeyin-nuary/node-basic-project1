@@ -1,0 +1,1 @@
+//index.js파일은 user의 request가 처음 도달하는 js

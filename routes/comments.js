@@ -1,4 +1,5 @@
 //깃헙 참고함
+
 const express = require('express');
 const router = express.Router();
 
@@ -8,16 +9,20 @@ const Comments = require('../schemas/comment.js');
 //2. 댓글 작성
 //댓글 내용 비워둔 채 댓글 작성 api 호출 시 "댓글 내용을 입력해주세요" 메시지 return
 //유효성 검사, alert?
+//try catch
+//arrow 함수 function 대신
+
 router.post('/:_postId/comments', async (req, res) => {
     try {
+
         const { _postId } = req.params;
-        try {
+        try {//프론트엔드에서 받아온 것을 이름 정의 -> req.body로 받아온다 =게시글 작성됨
             const { user, password, content } = req.body;
             await Comments.create({ postId: _postId, user, password, content });
             return res.status(200).json({ message: '댓글을 생성하였습니다.' });
         } catch {
             return res.status(400).send({ message: '댓글 내용을 입력해주세요.' });
-        }
+        }//문제가 생겼을 때 400이라고 뜨고 메시지 반환
     } catch {
         return res.status(400).send({ message: '데이터 형식이 올바르지 않습니다.' });
     }

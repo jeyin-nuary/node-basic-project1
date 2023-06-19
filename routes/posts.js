@@ -1,6 +1,9 @@
+//express에서 request
+//param = parameter. req.params = req객체에 parameter라는 프로퍼티
+//express는 가장 인기있는 node 웹 프레임워크(=특정 프로그램 개발을 위한 규칙을 제공하는 프로그램)
 const express = require('express');
 const router = express.Router();
-
+//posts를 스키마 포스트js파일에 연결
 const Posts = require('../schemas/post.js');
 
 //2. 게시글 작성 api
@@ -22,22 +25,18 @@ router.post('/', async (req, res) => {
 
 //1. 전체 게시글 목록 조회 api
 //제목, 작성자명, 작성 날짜 조회
-router.get('/:_postId', async (req, res) => {
-    try {
-        const { _postId } = req.params;
-        const post = await Posts.findOne({ _id: _postId }, { "password": 0, "_v": 0 });
-        const postPrint = {
+router.get('/', async (req, res) => {
+    const post = await Posts.find({}, { "__v": 0, "password": 0, "content": 0 });
+    const postPrint = post.map((value) => {
+        return {
             postId: post._id,
             user: post.user,
             title: post.title,
             content: post.content,
             createdAt: post.createdAt
-        };
-        res.json({ data: postPrint });
-    } catch (err) {
-        console.error(err);
-        res.status(400).send({ message: '데이터 형식이 올바르지 않습니다.' });
-    }
+        }
+    })
+    res.json({ data: postPrint });
 });
 
 
@@ -50,7 +49,7 @@ router.get('/:_postId', async (req, res) => {
 router.get('/:_postId', async (req, res) => {
     try {
         const { _postId } = req.params;
-        const post = await Posts.findOne({ _id: _postId }, { "password": 0, "_v": 0 });
+        const post = await Posts.findOne({ _id: _postId }, { "password": 0, "__v": 0 });
         const postPrint = {
             postId: post._id,
             user: post.user,
@@ -101,6 +100,7 @@ router.delete('/:_postId', async (req, res) => {
     try {
         const { _postId } = req.params;
         const { password } = req.body;
+        //post라는 게시글 작성
         const [post] = await Posts.find({ _id: _postId });
 
         if (!post) {
